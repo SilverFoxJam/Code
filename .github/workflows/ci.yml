@@ -38,7 +38,7 @@ jobs:
           pip install -r "$PROJECT_DIR/requirements.txt" -r "$PROJECT_DIR/requirements-dev.txt"
 
       - name: "Lint (flake8)"
-        run: flake8 "$PROJECT_DIR"
+        run: flake8 --config "$PROJECT_DIR/.flake8" "$PROJECT_DIR"
 
       - name: "Security scan (Bandit) — advisory"
         continue-on-error: true
