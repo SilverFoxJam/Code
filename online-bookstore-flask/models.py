@@ -10,7 +10,7 @@ class CartItem:
     def __init__(self, book, quantity=1):
         self.book = book
         self.quantity = quantity
-    
+
     def get_total_price(self):
         return self.book.price * self.quantity
 

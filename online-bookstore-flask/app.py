@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, jsonify
+from flask import Flask, render_template, request, redirect, url_for, flash
 from models import Book, Cart
 
 app = Flask(__name__)
@@ -16,6 +16,7 @@ BOOKS = [
     Book("Moby Dick", "Adventure", 12.49, "/images/books/moby_dick.jpg")
 ]
 
+
 def get_book_by_title(title):
     """Helper function to find a book by title"""
     return next((book for book in BOOKS if book.title == title), None)
@@ -30,9 +31,9 @@ def index():
 def add_to_cart():
     book_title = request.form.get('title')
     quantity = int(request.form.get('quantity', 1))
-    
+
     book = get_book_by_title(book_title)
-    
+
     if book:
         cart.add_book(book, quantity)
         flash(f'Added {quantity} "{book.title}" to cart!', 'success')
@@ -69,14 +70,14 @@ def update_cart():
     """
     book_title = request.form.get('title')
     quantity = int(request.form.get('quantity', 1))
-    
+
     cart.update_quantity(book_title, quantity)
-    
+
     if quantity <= 0:
         flash(f'Removed "{book_title}" from cart!', 'success')
     else:
         flash(f'Updated "{book_title}" quantity to {quantity}!', 'success')
-    
+
     return redirect(url_for('view_cart'))
 
 
@@ -97,7 +98,7 @@ def checkout():
     if cart.is_empty():
         flash('Your cart is empty!', 'error')
         return redirect(url_for('index'))
-    
+
     total_price = cart.get_total_price()
     return render_template('checkout.html', cart=cart, total_price=total_price)
 

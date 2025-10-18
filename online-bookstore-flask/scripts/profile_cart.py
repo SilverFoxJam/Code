@@ -1,6 +1,15 @@
-# scripts/profile_cart.py
-import os, cProfile, pstats, io
-from models import Book, Cart
+import os
+import sys
+import cProfile
+import io
+import pstats
+
+ROOT = os.path.dirname(os.path.dirname(__file__))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
+from models import Book, Cart  # noqa: E402
+
 
 def main():
     cart = Cart()
@@ -10,6 +19,7 @@ def main():
     # profile the total computation many times
     for _ in range(200):
         cart.get_total_price()
+
 
 if __name__ == "__main__":
     os.makedirs("artifacts/perf", exist_ok=True)
