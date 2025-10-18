@@ -13,7 +13,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11", "3.13"]
-    # Run from the REPO ROOT; point every path explicitly at the subfolder
     env:
       PROJECT_DIR: online-bookstore-flask
       PYTHONPATH: ${{ github.workspace }}/online-bookstore-flask
@@ -38,32 +37,15 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r "$PROJECT_DIR/requirements.txt" -r "$PROJECT_DIR/requirements-dev.txt"
 
-      - name: "Debug - show repo files"
-        run: |
-          echo "PWD=$(pwd)"
-          ls -la
-          echo "---- tracked files under PROJECT_DIR ----"
-          git ls-files "$PROJECT_DIR" | sed -n '1,200p'
-          echo "---- tests tree ----"
-          ls -R "$PROJECT_DIR/tests" || true
-          echo "---- pytest version ----"
-          pytest --version || true
+      - name: "Lint (flake8)"
+        run: flake8 "$PROJECT_DIR"
 
-      - name: "Lint (flake8) — temporarily non-blocking"
-        continue-on-error: true
-        run: flake8 "$PROJECT_DIR" || true
-
-      - name: "Security scan (Bandit) — non-blocking"
+      - name: "Security scan (Bandit) — advisory"
         continue-on-error: true
         run: bandit -r "$PROJECT_DIR/app.py" "$PROJECT_DIR/models.py" -q || true
 
-      # Disable coverage ONLY for this dry-run so it never fails here
-      - name: "Debug - pytest collection only (no coverage)"
-        continue-on-error: true
-        run: pytest -c "$PROJECT_DIR/pytest.ini" --collect-only -q -o addopts="" "$PROJECT_DIR/tests"
-
       - name: "Unit & integration tests with coverage (85% gate via pytest.ini)"
-        run: pytest -c "$PROJECT_DIR/pytest.ini" "$PROJECT_DIR/tests" -m "not perf" --junitxml="$PROJECT_DIR/pytest-results.xml"
+        run: pytest -c "$PROJECT_DIR/pytest.ini" "$PROJECT_DIR/tests" -m "not perf" --cov-config="$PROJECT_DIR/.coveragerc" --junitxml="$PROJECT_DIR/pytest-results.xml"
 
       - name: "Upload test report"
         if: always()
