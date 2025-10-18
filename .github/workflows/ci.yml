@@ -56,8 +56,10 @@ jobs:
         continue-on-error: true
         run: bandit -r app.py models.py -q || true
 
-      - name: "Debug - pytest collection only"
-        run: pytest --collect-only -q
+      # IMPORTANT: disable coverage only for this collection dry-run
+      - name: "Debug - pytest collection only (no coverage)"
+        continue-on-error: true
+        run: pytest --collect-only -q -o addopts=""
 
       - name: "Unit & integration tests with coverage (85% gate via pytest.ini)"
         run: pytest tests -m "not perf" --junitxml=pytest-results.xml
