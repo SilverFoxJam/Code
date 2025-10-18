@@ -220,3 +220,7 @@ test_*.py
 *_test.py
 temp/
 tmp/
+
+# --- allow the test suite to be tracked ---
+!online-bookstore-flask/tests/
+!online-bookstore-flask/tests/**
